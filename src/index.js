@@ -8,7 +8,17 @@ import proyects from './routes/proyects.routes.js'
 //Inicializamos express
 const app = express()
 //Usando cors en la aplicación 
-app.use(cors())
+
+const corsOptions = {
+    origin: 'http://localhost:3000', // Cambia esto al dominio de tu aplicación React
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204,
+  };
+  
+  // Habilitar CORS con opciones personalizadas
+  app.use(cors(corsOptions));
+  
 //Vaalidar archivos json en la app
 app.use(express.json())
 //Usar las rutas en la app
