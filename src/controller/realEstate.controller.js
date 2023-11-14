@@ -58,7 +58,7 @@ export const consultarInmuebles = async (req, res) => {
     res.send(rows)
 }
 
-// Cambia 
+// Consulta el inmueble individualmente
 export const verInmueble = async (req, res) => {
     const { idInmueble } = req.params;
     try {
