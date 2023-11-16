@@ -14,15 +14,33 @@ export const tipoReserva = async (req, res) => {
             error
         });
     }
-
 }
+
+
 
 export const solicitudesPendientes = async (req, res) => {
-    try {
-        const [rows] = await pool.query('call sp_all_reservas(1, 3);')
-        res.json(rows);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al obtener las solicitudes pendientes' });
-    }
+    const tipo = 1
+    const asesor =3
+    const [rows] = await pool.query('call sp_all_reservas(?, ?)', [tipo, asesor])
+    res.send(rows[0]);
 }
+
+export const verSolicitud = async (req, res) => {
+    const { id } = req.params;
+    const [rows] = await pool.query('call sp_ver_reserva(?)', [id])
+    res.send(rows[0]);
+}
+
+export const verSolicitudes = async (req, res) => {
+    try {
+        const asesor = 3;
+        let { fecha } = req.query; 
+        fecha = fecha.toString()
+        const [rows] = await pool.query('call sp_reserva_dia(?, ?)', [fecha, asesor])
+        res.send(rows[0]);
+    } catch (error) {
+        console.error('Error al obtener reservas:', error);
+        res.status(500).send('Error interno al obtener reservas');
+    }
+};
+
