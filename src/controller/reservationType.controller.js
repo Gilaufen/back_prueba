@@ -1,4 +1,6 @@
 import { pool } from '../bd.js';
+const nodemailer = require('nodemailer');
+
 
 export const tipoReserva = async (req, res) => {
     const { idTipoReserva, hora, fecha } = req.body;
@@ -44,3 +46,42 @@ export const verSolicitudes = async (req, res) => {
     }
 };
 
+export const aceptarSolicitud = async (req, res) => {
+        const {id} = req.params;
+        const [rows] = await pool.query('call sp_set_1_request(?)', [id])
+        res.send(rows[0]);
+};
+
+
+export const rechazarSolicitud = async (req, res) => {
+    const {id} = req.params;
+    const [rows] = await pool.query('call sp_delet_request(?)', [id])
+    res.send(rows[0]);
+};
+
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'proyectoarquideco@gmail.com',
+        pass: 'sena1234'
+    }
+});
+
+export const enviarCorreo = async (destinatario, asunto, mensaje) => {
+    const opcionesCorreo = {
+        from: 'proyectoarquideco@gmail.com',
+        to: destinatario,
+        subject: asunto,
+        text: mensaje
+    };
+
+    try {
+        const info = await transporter.sendMail(opcionesCorreo);
+        console.log('Correo enviado:', info.response);
+        return true;
+    } catch (error) {
+        console.error('Error al enviar el correo:', error);
+        return false;
+    }
+};
