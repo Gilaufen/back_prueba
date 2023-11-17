@@ -22,8 +22,8 @@ export const tipoReserva = async (req, res) => {
 }
 
 // Controlador para obtener todas las solicitudes pendientes
-export const solicitudesPendientes = async (req, res) => {
-    const tipo = 1
+export const todasLasReservas = async (req, res) => {
+    const {tipo} = req.query
     const asesor = 3
     // Llama al procedimiento almacenado para obtener las solicitudes pendientes
     const [rows] = await pool.query('call sp_all_reservas(?, ?)', [tipo, asesor])
@@ -66,7 +66,7 @@ export const aceptarSolicitud = async (req, res) => {
 export const rechazarSolicitud = async (req, res) => {
     const { id } = req.params;
     // Llama al procedimiento almacenado para rechazar la solicitud
-    const [rows] = await pool.query('call sp_delet_request(?)', [id]);
+    const [rows] = await pool.query('call sp_delete_request(?)', [id]);
     res.send({ success: true, message: 'Solicitud rechazada correctamente' });
 };
 
@@ -80,8 +80,12 @@ const transporter = nodemailer.createTransport({
 });
 
 // Función para enviar correos electrónicos
-export const enviarCorreo = async (destinatario, asunto, mensaje) => {
-    console.log(destinatario)
+export const enviarCorreo = async (req, res) => {
+    const destinatario = req.body.destinatario;
+    const asunto = req.body.asunto;
+    const mensaje = req.body.mensaje;
+
+
     if (!destinatario) {
         console.log("no")
     }else{

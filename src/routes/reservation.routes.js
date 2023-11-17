@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { tipoReserva, solicitudesPendientes ,verSolicitud , verSolicitudes, aceptarSolicitud,enviarCorreo, rechazarSolicitud} from "../controller/reservationType.controller.js";
+import { tipoReserva, todasLasReservas ,verSolicitud , verSolicitudes, aceptarSolicitud,enviarCorreo, rechazarSolicitud} from "../controller/reservationType.controller.js";
 
 
 const router = Router();
 router.post('/documents', tipoReserva)
-router.get('/requestReservation', solicitudesPendientes)
+router.get('/requestReservation', todasLasReservas)
 router.get('/requestIndividual/:id', verSolicitud)
 router.get('/reservations/', verSolicitudes)
 router.post('/aceptRequest/:id', aceptarSolicitud)

@@ -77,7 +77,7 @@ export const inicio = (req, res) => {
 
 export const consultar = async (req, res)=>{
     try{
-        const [rows] =  await pool.query('select * from usuario')
+        const [rows] =  await pool.query('select * from view_usuario');
         res.send(rows)
     }
     catch(error){
@@ -109,8 +109,8 @@ export const consultarInfoUsuario = async(req, res)=>{
     const {id} = req.params
     console.log(id)
     try{
-        const [rows]= await pool.query('select * from usuario where idUsuario = ?', [id])
-        res.send(rows)
+        const [rows]= await pool.query('select * from view_usuario where idUsuario = ?', [id])
+        res.send(rows[0])
         }
         catch(error){
             return res.status(500).json({
@@ -120,3 +120,38 @@ export const consultarInfoUsuario = async(req, res)=>{
         }
 
 }
+export const inactivarUsuario = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+
+    try {
+        const [result] = await pool.query('UPDATE usuario SET estado = 0 WHERE idUsuario = ?', [id]);
+
+        if (result.affectedRows > 0) {
+            res.send({ success: true, message: 'Usuario inactivado correctamente' });
+        } else {
+            res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        }
+    } catch (error) {
+        console.error('Error al inactivar usuario:', error);
+        res.status(500).json({ success: false, message: 'Ocurrió un error al inactivar el usuario', error });
+    }
+};
+
+export const activarUsuario = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+
+    try {
+        const [result] = await pool.query('UPDATE usuario SET estado = 1 WHERE idUsuario = ?', [id]);
+
+        if (result.affectedRows > 0) {
+            res.send({ success: true, message: 'Usuario activado correctamente' });
+        } else {
+            res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        }
+    } catch (error) {
+        console.error('Error al activar usuario:', error);
+        res.status(500).json({ success: false, message: 'Ocurrió un error al activar el usuario', error });
+    }
+};
