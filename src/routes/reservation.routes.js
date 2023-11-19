@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { tipoReserva, todasLasReservas ,verSolicitud , verSolicitudes, aceptarSolicitud,enviarCorreo, rechazarSolicitud} from "../controller/reservationType.controller.js";
+import { documents, todasLasReservas ,verSolicitud , verSolicitudes, aceptarSolicitud,enviarCorreo, rechazarSolicitud} from "../controller/reservationType.controller.js";
 
 
 const router = Router();
-router.post('/documents', tipoReserva)
+router.post('/documents', documents)
 router.get('/requestReservation', todasLasReservas)
 router.get('/requestIndividual/:id', verSolicitud)
 router.get('/reservations/', verSolicitudes)

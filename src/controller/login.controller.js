@@ -18,11 +18,12 @@ export const inicioSession = async (req, res) => {
     try {
         const [rows] = await pool.query('select * from Usuario where correoElectronico=? and contraseña=?', [email, password]);
         if (rows.length === 0) return res.status(404).json();
+        console.log([rows]);
 
         //credenciales para el token
         const user = { 
             username: email,
-            rolUser: rows[0].rol,
+            rolUser: rows[0].idRolFK,
             idUser: rows[0].idUsuario 
         };
 
@@ -31,7 +32,7 @@ export const inicioSession = async (req, res) => {
 
         res.status(200).json({
             token: accessToken,
-            rolUser: rows[0].rol,
+            rolUser: rows[0].idRolFK,
         });
         
     } catch (error) {
@@ -67,6 +68,7 @@ export function validateToken(req, res, next) {
 
 
 
+
 export const inicio = (req, res) => {
     res.status(200).json({
         username: req.user
@@ -91,9 +93,11 @@ export const consultar = async (req, res)=>{
 
 //Funcion que registra un usuario 
 export const registrar = async(req, res)=>{
-    const { name,numId,email,lastName,typeId,number,password } = req.body;
-    try{
-    const [rows]= await pool.query('insert into usuario (nombre, apellido, numIdentificacion, tipoIdentificacion, correoElectronico, numero, contraseña) values(?,?,?,?,?,?,?)',[name,lastName, numId, typeId, email, number, password])
+    const { name, lastName, email, numId, typeId, password, num} = req.body;
+  
+    try {
+    const [rows]= await pool.query('INSERT INTO Usuario (nombre, apellido, correoElectronico, numIdentificacion, tipoIdentificacion, contraseña, numeroContacto) VALUES (?,?,?,?,?,?,?)',
+    [name, lastName, email, numId, typeId, password, num])
     if (rows.affectedRows === 0) return res.status(404).json();
     res.send(rows)
     }
