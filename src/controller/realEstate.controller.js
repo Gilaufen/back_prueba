@@ -53,28 +53,28 @@ export const registroInmueble = async (req, res) => {
 
 
 //funcion para actualizar e inactivar 
-export const actualizarInmueble =async(req,res)=>{
-  const {id} = req.params
-  const {numPisos, estadoConstruccion, areaConstruida, areaLote, numHabitaciones, numBanos, direccion, barrio, descripcion, tipoInmueble, clasificacion}=req.body;
+export const actualizarInmueble = async (req, res) => {
+  const { id } = req.params
+  const { numPisos, estadoConstruccion, areaConstruida, areaLote, numHabitaciones, numBanos, direccion, precio, barrio, tipoInmueble } = req.body;
   const filename = req.file ? req.file.filename : null;
   const imagePath = 'src/uploads/imageRealEstate/' + filename;
 
   try {
     // Lee los datos binarios de la imagen
-  const imageBuffer = fs.readFileSync(imagePath);
+    const imageBuffer = req.file ? fs.readFileSync(imagePath) : null;
 
-  const [rows]=await pool.query('update Inmueble set numpisos = IFNULL(?,numpisos), estadoconstruccion = IFNULL(?, estadoconstruccion), areaLote =  IFNULL(?, areaLote), numHabitaciones = IFNULL(?, numHabitaciones), imagenes = IFNULL(?, imagenes), numBaños = IFNULL(?, numBaños), direccion = IFNULL(?, direccion), barrio = IFNULL(?,barrio), descripcionProyecto = IFNULL(?, descripcionProyecto), tipoInmueble = IFNULL(?, tipoInmueble), clasificacion = IFNULL(?,clasificacion) where idInmueble = ? ',
-  [numPisos, estadoConstruccion, areaConstruida, areaLote, numHabitaciones, imageBuffer, numBanos, direccion, barrio, descripcion, tipoInmueble, clasificacion, id])
-  if (rows.affectedRows === 0) return res.status(404).json();
-  res.send(rows)
+    const [rows] = await pool.query('call sp_update_inmueble(?,?,?,?,?,?,?,?,?,?,?,?)',
+      [numPisos, estadoConstruccion, areaConstruida, areaLote, numHabitaciones, imageBuffer, numBanos, direccion, barrio, precio,tipoInmueble,  id])
+    if (rows.affectedRows === 0) return res.status(404);
+    res.send([rows])
   }
-  catch(error){
-      return res.status(500).json({
-          message: 'something goes wrong',
-          error
-      })
+  catch (error) {
+    return res.status(500).json({
+      message: 'something goes wrong',
+      error
+    })
   }
-  
+
 }
 
 
@@ -86,22 +86,20 @@ export const consultarInmuebles = async (req, res) => {
     const images = [];
 
     for (const img of rows) {
-      const imagePath = `${img.idInmueble}.jpg`; 
-      
+      const imagePath = `${img.idInmueble}.jpg`;
+
       // Asegúrate de que img.imagenes contiene datos binarios
       const imageBuffer = Buffer.from(img.imagenes, 'base64');
 
-      await fs.promises.writeFile(path.join('src/dbFiles/images/',imagePath), imageBuffer);
+      await fs.promises.writeFile(path.join('src/dbFiles/images/', imagePath), imageBuffer);
 
       images.push({
         id: img.idInmueble,
         imagen: imagePath
       });
     }
-    console.log(images);    // Dentro del bucle for en tu función consultarInmuebles
 
-
-    console.log(rows);
+    console.log(images)
     res.json({ rows, images });
 
   } catch (error) {
@@ -112,16 +110,37 @@ export const consultarInmuebles = async (req, res) => {
     });
   }
 };
-  
 
-// Consulta el inmueble individualmente
+
 export const verInmueble = async (req, res) => {
-    const { idInmueble } = req.params;
-    try {
-        const [rows] = await pool.query('SELECT * FROM Inmueble WHERE idInmueble = ?', [idInmueble]);
-        res.send(rows);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al obtener el inmueble' });
+  const { idInmueble } = req.params;
+  try {
+    let [rows] = await pool.query('SELECT * FROM Inmueble WHERE idInmueble = ?', [idInmueble]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Inmueble no encontrado' });
     }
+
+    const img = rows[0];
+    const imagePath = `${img.idInmueble}.jpg`;
+
+    // Asegúrate de que img.imagenes contiene datos binarios
+    const imageBuffer = Buffer.from(img.imagenes, 'base64');
+
+    await fs.promises.writeFile(path.join('src/dbFiles/images/', imagePath), imageBuffer);
+
+    const imageResult = {
+      id: img.idInmueble,
+      imagen: imagePath
+    };
+
+    rows = rows[0]
+
+    console.log({ rows, imageResult }); // Resultado de la imagen individual
+    res.json({ rows, imageResult });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener el inmueble' });
+  }
 };

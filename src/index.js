@@ -20,6 +20,9 @@ const corsOptions = {
   
   // Habilitar CORS con opciones personalizadas
   app.use(cors(corsOptions));
+
+//usar archivos estaticos para que esta carpeta pueda ser accedida desde el navegaor
+app.use(express.static('src/dbFiles/images/')) 
   
 //Vaalidar archivos json en la app
 app.use(express.json())
