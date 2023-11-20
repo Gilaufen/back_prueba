@@ -62,7 +62,7 @@ export const actualizarProyecto = async (req, res) => {
 
 export const verProyectos = async (req, res) => {
   try {
-    const [rows] = await pool.query('select * from proyecto where clasificacion = 0')
+    const [rows] = await pool.query('select * from inmueble where clasificacion = 0')
     if (rows.affectedRows === 0) return res.status(404);
     res.send(rows)
     console.log(rows)

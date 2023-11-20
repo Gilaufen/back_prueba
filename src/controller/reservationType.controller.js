@@ -1,9 +1,8 @@
-// Importa la conexión a la base de datos y el módulo nodemailer
 import { pool } from '../bd.js';
 import multer from 'multer';
 import fs from 'fs'
-import path from 'path';
 import nodemailer from 'nodemailer';
+import path from 'path';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -153,7 +152,6 @@ export const Appraise = async(req,res)=>{
         });
       }
     }
-
 
 // Controlador para obtener todas las solicitudes pendientes
 export const todasLasReservas = async (req, res) => {

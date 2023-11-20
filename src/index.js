@@ -6,6 +6,7 @@ import realEstate from './routes/realEstate.routes.js';
 import proyects from './routes/proyects.routes.js' ;
 import reservation from './routes/reservation.routes.js';
 import dataExtra from './routes/adminData.routes.js';
+import request from './routes/request.routes.js'
 
 //Inicializamos express
 const app = express()
@@ -27,7 +28,7 @@ app.use(express.static('src/dbFiles/images/'))
 //Vaalidar archivos json en la app
 app.use(express.json())
 //Usar las rutas en la app
-app.use(user, realEstate, proyects,reservation, dataExtra)
+app.use(user, realEstate, proyects,reservation, dataExtra, request)
 
 
 //Ejecutar el puerto
