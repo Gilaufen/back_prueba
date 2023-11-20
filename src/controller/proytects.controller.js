@@ -59,3 +59,19 @@ export const actualizarProyecto = async (req, res) => {
     })
   }
 }
+
+export const verProyectos = async (req, res) => {
+  try {
+    const [rows] = await pool.query('select * from proyecto where clasificacion = 0')
+    if (rows.affectedRows === 0) return res.status(404);
+    res.send(rows)
+    console.log(rows)
+  }
+  catch (error) {
+    return res.status(500).json({
+      message: 'something goes wrong',
+      error
+    })
+  }
+}
+
