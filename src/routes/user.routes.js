@@ -14,4 +14,5 @@ router.post('/activateUser/:id', activarUsuario)
 router.put('/updateUser/:id', actualizarDatos)
 
 
+
 export default router
