@@ -131,7 +131,6 @@ export const registrar = async(req, res)=>{
 
 export const consultarInfoUsuario = async(req, res)=>{
     const {id} = req.params
-    console.log(id)
     try{
         const [rows]= await pool.query('select * from view_usuario where idUsuario = ?', [id])
         res.send(rows[0])
@@ -146,7 +145,6 @@ export const consultarInfoUsuario = async(req, res)=>{
 }
 export const inactivarUsuario = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
 
     try {
         const [result] = await pool.query('UPDATE usuario SET estado = 0 WHERE idUsuario = ?', [id]);
@@ -164,7 +162,6 @@ export const inactivarUsuario = async (req, res) => {
 
 export const activarUsuario = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
 
     try {
         const [result] = await pool.query('UPDATE usuario SET estado = 1 WHERE idUsuario = ?', [id]);
