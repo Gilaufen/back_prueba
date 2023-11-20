@@ -176,3 +176,22 @@ export const activarUsuario = async (req, res) => {
         res.status(500).json({ success: false, message: 'Ocurrió un error al activar el usuario', error });
     }
 };
+
+
+export const actualizarDatos = async (req, res) => {
+    const { id } = req.params;
+    const {correoElectronico, telefono } = req.body;
+
+    try {
+        const [rows] = await pool.query('call sp_update_user(?,?,?)', [correoElectronico, telefono, id]);
+
+        if (rows.affectedRows > 0) {
+            res.send({ success: true, message: 'Usuario actualizado correctamente' });
+        } else {
+            res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        }
+    } catch (error) {
+        console.error('Error usuario:', error);
+        res.status(500).json({ success: false, message: 'Ocurrió un error', error });
+    }
+};

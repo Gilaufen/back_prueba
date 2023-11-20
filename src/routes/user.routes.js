@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import {inicioSession, consultar, validateToken, registrar, consultarInfoUsuario, inactivarUsuario, activarUsuario} from '../controller/login.controller.js'
+import {inicioSession, consultar, validateToken, registrar, consultarInfoUsuario, inactivarUsuario, activarUsuario, actualizarDatos} from '../controller/login.controller.js'
 
 
 //Definición de rutas 
@@ -11,6 +11,7 @@ router.post('/registro', registrar)
 router.get('/consultUser/:id', consultarInfoUsuario)
 router.post('/inactivateUser/:id', inactivarUsuario)
 router.post('/activateUser/:id', activarUsuario)
+router.put('/updateUser/:id', actualizarDatos)
 
 
 export default router
