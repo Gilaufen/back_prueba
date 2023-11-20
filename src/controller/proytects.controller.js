@@ -75,3 +75,59 @@ export const verProyectos = async (req, res) => {
   }
 }
 
+
+export const verProyecto = async (req, res) => {
+  const { id} = req.params;
+  try {
+    let [rows] = await pool.query('SELECT * FROM Inmueble WHERE idInmueble = ? and clasificacion = 0', [id]);
+    console.log(rows);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+
+    const img = rows[0];
+    const imagePath = `${img.idInmueble}.jpg`;
+
+    // Asegúrate de que img.imagenes contiene datos binarios
+    const imageBuffer = Buffer.from(img.imagenes, 'base64');
+
+    await fs.promises.writeFile(path.join('src/dbFiles/images/', imagePath), imageBuffer);
+
+    const imageResult = {
+      id: img.idInmueble,
+      imagen: imagePath
+    };
+
+    rows = rows[0]
+
+    console.log({ rows, imageResult }); // Resultado de la imagen individual
+    res.json({ rows, imageResult });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener el proyecto' });
+  }
+};
+
+export const publicarProyecto = async (req, res) => {
+
+  const { id } = req.params;
+  console.log(id);
+
+  try {
+      const [result] = await pool.query('UPDATE inmueble SET clasificacion = 1 WHERE idinmueble = ?', [id]);
+
+      if (result.affectedRows > 0) {
+          res.send({ success: true, message: 'Proyecto Publicado correctamente' });
+          console.log("publico el inmueble")
+
+      } else {
+          res.status(404).json({ success: false, message: 'Proyecto no encontrado' });
+          console.log("no publico el inmueble")
+      }
+  } catch (error) {
+      console.error('Error al publicar el proyecto:', error);
+      res.status(500).json({ success: false, message: 'Ocurrió un error al publicar el proyecto', error });
+  }
+};
